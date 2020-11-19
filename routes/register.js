@@ -11,7 +11,7 @@ var crypto = require('crypto');
 
 const emailValidator = new EmailValidator();
 
-//Register function --- http://IP:3000/register/
+//Register function --- http://IP:3000/register
 router.post('/', async (req, res) => {
     var hash = crypto.createHash('sha256');
 
@@ -22,6 +22,7 @@ router.post('/', async (req, res) => {
         password: hash.update(req.body.password).digest('hex')
     });
     try {
+
         //Check if the email is valid
         var { wellFormed, validDomain, validMailbox } = await emailValidator.verify(user.email);
         if (wellFormed && validDomain) {

@@ -110,13 +110,13 @@ exports.makeBody = function (to, from, subject, message) {
         "subject: ", subject, "\n\n",
         message
     ].join('');
-    console.log(to + from + subject + message);
+    //console.log(to + from + subject + message);
     var encodedMail = new Buffer(str).toString("base64").replace(/\+/g, '-').replace(/\//g, '_');
     return encodedMail;
 }
 
 exports.sendVerificationEmail = function (auth) {
-    message = 'Desde el equipo de desarrolladores de MatchPoint estamos encantados de que te hayas registrado en nuestra app.\n\n' +
+    message = 'Desde el equipo de desarrolladores de WanderGuide estamos encantados de que te hayas registrado en nuestra app.\n\n' +
         'Antes de empezar a utilizarla tienes que verificar tu identidad haciendo click en el siguiente enlace: ' + enlace_verificacion + '\n\n' +
         'Esperamos que nuestro servicio te resulte de utilidad. ENJOY!!!';
     var raw = module.exports.makeBody(email_verificacion, 'wander.guide.team@gmail.com', 'Verify you email address (WanderGuide)', message);
