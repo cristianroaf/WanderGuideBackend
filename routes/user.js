@@ -45,7 +45,9 @@ router.post('/updatepwd', async (req, res) => {
 //Ask for the email to recover password
 router.post('/recovery', async (req, res) => {
     var email = req.body.email;
-    const user = await User.findOne({ "email": email });
+    console.log(email);
+    const user = await User.find({"email":email});
+    console.log(user);
     if (isEmpty(user))
         return res.status(411).json('Provide a correct email');
     else {

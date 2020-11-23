@@ -19,11 +19,13 @@ var login = require('./routes/login');
 var register = require('./routes/register');
 var profile = require('./routes/profile');
 var user = require('./routes/user');
+var guides = require('./routes/guides');
 
 app.use('/login', login);
 app.use('/register', register);
 app.use('/profile', profile)
 app.use('/user', user);
+app.use('/guides', guides);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

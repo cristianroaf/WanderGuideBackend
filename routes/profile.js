@@ -18,6 +18,7 @@ router.get('/:id', async (req, res) => {
         }
     }
     catch (err) {
+        console.log(err.message);
         res.status(421).json("Unexpected error");
     }
 });
@@ -36,7 +37,7 @@ router.post('/:id', async (req, res) => {
                 description: req.body.description,
                 age: req.body.age
             });
-            return res.status(200).json("ok");
+            return res.status(200).json(updatedProfile);
         }
         catch (err) {
             console.log(err);
@@ -85,7 +86,7 @@ router.post('/:id/image', upload.single('image'), async (req, res) => {
             console.log(err);
         }
 
-        res.status(200).json("ok");
+        res.status(200).json("Image changed successfully");
     }
 });
 

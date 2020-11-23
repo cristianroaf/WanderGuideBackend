@@ -55,15 +55,18 @@
     <Content Include="gmailAPI\password_recovery\token.json">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="models\Guide.js" />
     <Content Include="models\Profile.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="models\ProfileImage.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="models\Stop.js" />
     <Content Include="models\User.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="routes\guides.js" />
     <Content Include="routes\login.js">
       <SubType>Code</SubType>
     </Content>
