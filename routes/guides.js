@@ -228,6 +228,64 @@ router.post('/:id/draft', async (req, res) => {
         console.log(err);
         res.status(421).json("error");
     }
+    //Rates a guide and creates rate object.
+    router.post('/rate', async (req, res) => {
+        user_id = req.body.user_id;
+        guide_id = req.body.guide_id;
+        rate = parseFloat(req.body.rate);
+        try {
+            var foundGuide = await Guide.findOne({ _id: guide_id, published: true });
+            if (isEmpty(foundGuide)) {
+                res.status(201).json("The guide does not exist");
+            }
+            else {
+                var foundGuide = await Guide.findOne({ _id: guide_id, user_id: user_id });
+                if (!isEmpty(foundGuide)) {
+                    res.status(202).json("You can't rate your own guide");
+                }
+                else {
+                    var foundRating = await Rating.findOne({ guide_id: guide_id, user_id: user_id });
+                    console.log(foundRating);
+                    if (!isEmpty(foundRating)) {
+                        res.status(203).json("User already rated this guide");
+                    }
+                    else {
+                        var foundGuide = await Guide.findOne({ _id: guide_id, published: true });
+                        if (!isEmpty(foundGuide)) {
+                            var total_votes = parseFloat(foundGuide.total_votes);
+                            var rating = parseFloat(foundGuide.rating);
+
+                            var new_rating = ((total_votes * rating) + rate) / (total_votes + 1);
+                            var new_total_votes = total_votes + 1;
+
+                            console.log(new_rating);
+                            console.log(new_total_votes);
+
+                            var UpdatedGuide = await Guide.findOneAndUpdate({ _id: guide_id, published: true }, {
+                                total_votes: new_total_votes,
+                                rating: new_rating
+                            });
+
+                            var foundGuide = await Guide.findOne({ _id: guide_id, published: true });
+                            if (!isEmpty(UpdatedGuide)) {
+                                var new_rating = new Rating({
+                                    user_id: user_id,
+                                    guide_id: guide_id,
+                                    rate: rate
+                                });
+                                const savedRating = await new_rating.save();
+                                res.status(200).json("Rated successfully");
+                            } else {
+                                //Didn't update successfully
+                                throw new Exception();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            res.json(400).send(err);
+        }
 });
 
 function isEmpty(obj) {
