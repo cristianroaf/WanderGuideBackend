@@ -3,6 +3,7 @@ const router = express.Router();
 const Guide = require('../models/Guide');
 const Stop = require('../models/Stop');
 const User = require('../models/User');
+const Rating = require('../models/Rating')
 
 //Gets all the guides that are published
 router.get('/', async (req, res) => {
@@ -188,46 +189,47 @@ router.post('/:id/draft/title', async (req, res) => {
 });
 
 //Adds a stop to the draft guide of the user, if it does not exist, creates a new not published guide.
-router.post('/:id/draft', async (req, res) => {
-    id = req.params.id;
-    console.log(req.body.latitude);
-    lat = req.body.latitude;
-    lng = req.body.longitude;
-    try {
-        //Check is a draft of the guide exists
-        var foundGuide = await Guide.findOne({ user_id: id, published: false });
-        //If it doesn't, create a new guide
-        if (isEmpty(foundGuide)) {
-            const newGuide = new Guide({
-                rating: 0,
-                total_votes: 0,
-                published: false,
-                user_id: id,
-                latitude: 0,
-                longitude: 0,
-                title: ""
+    router.post('/:id/draft', async (req, res) => {
+        id = req.params.id;
+        console.log(req.body.latitude);
+        lat = (req.body.latitude).replace(/,/g, ".");
+        lng = (req.body.longitude).replace(/,/g, ".");
+        try {
+            //Check is a draft of the guide exists
+            var foundGuide = await Guide.findOne({ user_id: id, published: false });
+            //If it doesn't, create a new guide
+            if (isEmpty(foundGuide)) {
+                const newGuide = new Guide({
+                    rating: 0,
+                    total_votes: 0,
+                    published: false,
+                    user_id: id,
+                    latitude: 0,
+                    longitude: 0,
+                    title: ""
+                });
+                foundGuide = await newGuide.save();
+            }
+            //Now create the specified stop
+            var newStop = new Stop({
+                title: req.body.title,
+                description: req.body.description,
+                latitude: lat,
+                longitude: lng,
+                guide_id: foundGuide._id
             });
-            foundGuide = await newGuide.save();
+            var savedStop = await newStop.save();
+            if (!isEmpty(savedStop)) {
+                res.status(200).json("OK");
+            }
+            else {
+                res.status(400).json("error");
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(421).json("error");
         }
-        //Now create the specified stop
-        var newStop = new Stop({
-            title: req.body.title,
-            description: req.body.description,
-            latitude: lat,
-            longitude: lng,
-            guide_id: foundGuide._id
-        });
-        var savedStop = await newStop.save();
-        if (!isEmpty(savedStop)) {
-            res.status(200).json("OK");
-        }
-        else {
-            res.status(400).json("error");
-        }
-    } catch (err) {
-        console.log(err);
-        res.status(421).json("error");
-    }
+    });
     //Rates a guide and creates rate object.
     router.post('/rate', async (req, res) => {
         user_id = req.body.user_id;
@@ -284,16 +286,16 @@ router.post('/:id/draft', async (req, res) => {
                 }
             }
         } catch (err) {
+            console.log(err)
             res.json(400).send(err);
         }
-});
+    });
 
-function isEmpty(obj) {
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key))
-            return false;
+    function isEmpty(obj) {
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key))
+                return false;
+        }
+        return true;
     }
-    return true;
-}
-
 module.exports = router;

@@ -62,6 +62,9 @@
     <Content Include="models\ProfileImage.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="models\Rating.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="models\Stop.js" />
     <Content Include="models\User.js">
       <SubType>Code</SubType>
